@@ -102,10 +102,10 @@ void working(bool worktemp) {
   }
 }
 
-void writeKey(bool skip) {  // Writes top row ... selfexplanatory (bool skip because writelength issues when cyclecheck)
+void writeKey(bool DBG) {  // Writes top row ... selfexplanatory (bool DBG because writelength issues when cyclecheck)
   int lengthpointer, numtest, steppointer;
   steppointer = pointer - 1;
-  if (skip) steppointer++;
+  if (DBG) steppointer = steppointer + 2;
   cyclepointer = 15;
   lcd.setCursor(0, 0);
   lcd.print("                ");
@@ -117,10 +117,19 @@ void writeKey(bool skip) {  // Writes top row ... selfexplanatory (bool skip bec
         lengthpointer++;
         numtest /= 10;
       } while (numtest);
-      lcd.setCursor((cyclepointer - lengthpointer + 1), 0);
-      lcd.print(numbafr[steppointer]);
-      cyclepointer = cyclepointer - lengthpointer;
-      steppointer--;
+      if (DBG) {
+        lcd.setCursor((cyclepointer - lengthpointer), 0);
+        if (numbafr[steppointer] >= 0) lcd.print('+');
+        lcd.print(numbafr[steppointer]);
+        cyclepointer = cyclepointer - lengthpointer -1;
+        steppointer--;
+      }
+      else {
+        lcd.setCursor((cyclepointer - lengthpointer + 1), 0);
+        lcd.print(numbafr[steppointer]);
+        cyclepointer = cyclepointer - lengthpointer;
+        steppointer--;
+      }
     } else {
       lcd.setCursor((cyclepointer), 0);
       lcd.print(oprbafr[steppointer]);
@@ -137,6 +146,7 @@ void writeKey(bool skip) {  // Writes top row ... selfexplanatory (bool skip bec
     lcd.print("DBG|");
   }
 }
+
 
 void bracketCheck() {  // DONE Prints number of open brackets
   lcd.setCursor(0, 1);
@@ -381,6 +391,7 @@ void loop()  // Main code block
       Fstat = 0;
       bracketcount = 0;
       lcd.clear();
+      writeKey(0);
     }
 
     if (key == '=') {  // DONE Compute output
