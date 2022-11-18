@@ -103,13 +103,13 @@ void working(bool worktemp) {
 }
 
 void writeKey(bool DBG) {  // Writes top row ... selfexplanatory (bool DBG because writelength issues when cyclecheck)
-  int lengthpointer, numtest, steppointer;
+  int lengthpointer, numtest, steppointer, cycluspointer;
   steppointer = pointer - 1;
   if (DBG) steppointer = steppointer + 2;
-  cyclepointer = 15;
+  cycluspointer = 15;
   lcd.setCursor(0, 0);
   lcd.print("                ");
-  while ((cyclepointer >= 0) and (steppointer > 0)) {
+  while ((cycluspointer >= 0) and (steppointer > 0)) {
     if (oprbafr[steppointer] == 'N') {
       lengthpointer = 0;
       numtest = numbafr[(steppointer)];
@@ -118,22 +118,21 @@ void writeKey(bool DBG) {  // Writes top row ... selfexplanatory (bool DBG becau
         numtest /= 10;
       } while (numtest);
       if (DBG) {
-        lcd.setCursor((cyclepointer - lengthpointer), 0);
+        lcd.setCursor((cycluspointer - lengthpointer), 0);
         if (numbafr[steppointer] >= 0) lcd.print('+');
         lcd.print(numbafr[steppointer]);
-        cyclepointer = cyclepointer - lengthpointer -1;
+        cycluspointer = cycluspointer - lengthpointer - 1;
         steppointer--;
-      }
-      else {
-        lcd.setCursor((cyclepointer - lengthpointer + 1), 0);
+      } else {
+        lcd.setCursor((cycluspointer - lengthpointer + 1), 0);
         lcd.print(numbafr[steppointer]);
-        cyclepointer = cyclepointer - lengthpointer;
+        cycluspointer = cycluspointer - lengthpointer;
         steppointer--;
       }
     } else {
-      lcd.setCursor((cyclepointer), 0);
+      lcd.setCursor((cycluspointer), 0);
       lcd.print(oprbafr[steppointer]);
-      cyclepointer--;
+      cycluspointer--;
       steppointer--;
     }
   }
@@ -160,12 +159,18 @@ void bracketCheck() {  // DONE Prints number of open brackets
 
 // Parsing/cleaning functions
 void formCompress() {  // DONE removes blank spaces in oprbafr and numbafr
+  pointerCompress();
   int movepointer;
   for (cyclepointer = 1; cyclepointer <= pointer + 1; cyclepointer++) {  // runs through whole oprbafr
     if (oprbafr[cyclepointer] == 'X') {
       for (movepointer = cyclepointer; movepointer <= pointer + 1; movepointer++) {  // moves all after the blank space to the left
         numbafr[movepointer] = numbafr[movepointer + 1];
         oprbafr[movepointer] = oprbafr[movepointer + 1];
+      }
+      if (cyclecheck == 1) {
+          cycleCheck();
+          lcd.setCursor(5, 1);
+          lcd.print("FormComp");
       }
     }
   }
@@ -183,8 +188,19 @@ void plusMinus() {                                                              
     if ((oprbafr[cyclepointer - 1] == '-') and (oprbafr[cyclepointer] == 'N')) {  // removes '-' sign
       numbafr[cyclepointer] = (-numbafr[cyclepointer]);
       oprbafr[cyclepointer - 1] = 'X';
-    } else if ((oprbafr[cyclepointer - 1] == '+') and (oprbafr[cyclepointer] == 'N')) {  // removes '+' sign
+      if (cyclecheck == 1) {
+            cycleCheck();
+            lcd.setCursor(5, 1);
+            lcd.print("PlusMin-");
+      }
+    } 
+    else if ((oprbafr[cyclepointer - 1] == '+') and (oprbafr[cyclepointer] == 'N')) {  // removes '+' sign
       oprbafr[cyclepointer - 1] = 'X';
+      if (cyclecheck == 1) {
+            cycleCheck();
+            lcd.setCursor(5, 1);
+            lcd.print("PlusMin+");
+      }
     }
   }
   formCompress();
@@ -198,13 +214,28 @@ void bracketMinus() {  // removes '-' before brackets (all numbers excluding mul
       for (changepointer = cyclepointer + 2; brcount > 0; changepointer++) {  // change all signs at NUMs after '-(' until ')'
         if ((oprbafr[changepointer] == 'N') and (oprbafr[changepointer - 1] != '/') and (oprbafr[changepointer - 1] != '*')) {
           numbafr[changepointer] = (-numbafr[changepointer]);
+          if (cyclecheck == 1) {
+            cycleCheck();
+            lcd.setCursor(5, 1);
+            lcd.print("Bracket-");
+          }
         }
         if (oprbafr[changepointer] == '(') brcount++;
         if (oprbafr[changepointer] == ')') brcount--;
       }
       oprbafr[cyclepointer] = 'X';  // removes '-' sign from oprbafr
+      if (cyclecheck == 1) {
+        cycleCheck();
+        lcd.setCursor(5, 1);
+        lcd.print("Bracket-");
+      }
     } else if ((oprbafr[cyclepointer] == '+') and (oprbafr[cyclepointer + 1] == '(')) {
       oprbafr[cyclepointer] = 'X';  // removes '+' sign from oprbafr
+      if (cyclecheck == 1) {
+        cycleCheck();
+        lcd.setCursor(5, 1);
+        lcd.print("Bracket-");
+      }
     }
   }
   formCompress();
@@ -217,7 +248,8 @@ void bracketRemove() {
       oprbafr[cyclepointer - 2] = 'X';
       if (cyclecheck == 1) {
         cycleCheck();
-        return;
+        lcd.setCursor(5, 1);
+        lcd.print("BrackRem");
       }
     }
   }
@@ -246,16 +278,14 @@ void printAns() {
 void computeAns() {  // TODO Computing ANS
   // TODO COMPUTING METHOD
   loopfault = 1;
-  if (cyclecheck == 1) cycleCheck();  // DEBUG cycleCheck function
-  plusMinus();                        // adds + or - to the number it belongs to
-  bracketMinus();                     // removes - before brackets
-  NUMcount();                         // counts number of NUMs in equation
+  plusMinus();     // adds + or - to the number it belongs to
+  bracketMinus();  // removes - before brackets
+  NUMcount();      // counts number of NUMs in equation
   while (pointer > 1) {
     simpleMulDiv();
     simpleAdd();      // Addition of numbers next to each other
-    bracketRemove();  //removes brackets around lonely NUM
+    bracketRemove();  // removes brackets around lonely NUM
     NUMcount();
-    if (cyclecheck == 1) cycleCheck();  // DEBUG cycleCheck function
     loopfault++;
     if (loopfault > maxop) {
       lcd.setCursor(0, 0);
@@ -276,13 +306,13 @@ void simpleAdd() {  // Adds NUMs in reverse order
         oprbafr[cyclepointer] = 'X';
         if (cyclecheck == 1) {
           cycleCheck();
-          return;
+          lcd.setCursor(5, 1);
+          lcd.print("SimpAdd+");
         }
       }
     }
   }
   formCompress();
-  if (cyclecheck == 1) cycleCheck();
 }
 
 void simpleMulDiv() {  // TODO Multiplies NUMs in reverse order
@@ -290,21 +320,31 @@ void simpleMulDiv() {  // TODO Multiplies NUMs in reverse order
     if ((oprbafr[cyclepointer] == 'N') and (oprbafr[cyclepointer - 2] == 'N') and ((oprbafr[cyclepointer - 1] == '/') or (oprbafr[cyclepointer - 1] == '*'))) {
       if (oprbafr[cyclepointer - 1] == '*') {
         numbafr[cyclepointer - 2] = numbafr[cyclepointer - 2] * numbafr[cyclepointer];
+        if (cyclecheck == 1) {
+          cycleCheck();
+          lcd.setCursor(5, 1);
+          lcd.print("MulDiv_*");
+        }
       } else if (oprbafr[cyclepointer - 1] == '/') {
         numbafr[cyclepointer - 2] = numbafr[cyclepointer - 2] / numbafr[cyclepointer];
+        if (cyclecheck == 1) {
+          cycleCheck();
+          lcd.setCursor(5, 1);
+          lcd.print("MulDiv_/");
+        }
       }
       numbafr[cyclepointer] = 0;
       oprbafr[cyclepointer] = 'X';
       oprbafr[cyclepointer - 1] = 'X';
       if (cyclecheck == 1) {
         cycleCheck();
-        return;
+        lcd.setCursor(5, 1);
+        lcd.print("MulDiv_X");
       }
-      formCompress();
+      formCompress();  // DELETE LATER for better cycling?
     }
   }
   formCompress();
-  if (cyclecheck == 1) cycleCheck();
 }
 
 // -----------------------------------------------------------SETUP FROM HERE-----------------------------------------------------------
@@ -492,8 +532,8 @@ void loop()  // Main code block
         writeKey(0);
         bracketCheck();
       }
-    } 
-    
+    }
+
     else if (key == ')') {  // DONE Close bracket
       if ((bracketcount > 0) && ((oprbafr[pointer - 1] == 'N') || (oprbafr[pointer - 1] == ')'))) {
         bracketcount--;
