@@ -1,0 +1,54 @@
+PlusMinus
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+BracketMinus
+	CycleCheck
+		WriteKey
+	CycleCheck
+		WriteKey
+	CycleCheck
+		WriteKey
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+NumCount
+==================================================================================
+SimpleMulDiv
+	CycleCheck
+		WriteKey
+	CycleCheck
+		WriteKey
+	CycleCheck
+		WriteKey
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+SimpleAdd
+	CycleCheck
+		WriteKey
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+BracketRemove
+	CycleCheck
+		WriteKey
+	FormCompress
+		PointerCompress
+		CycleCheck
+			Writekey
+		PointerCompress
+NumCount

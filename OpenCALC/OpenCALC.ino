@@ -509,6 +509,7 @@ void setup() {
   keypad.setHoldTime(500);
   keypad.setDebounceTime(25);
   working(0);
+  writeKey(0);
 }
 
 //-----------------------------------------------------------LOOP FROM HERE-----------------------------------------------------------------
