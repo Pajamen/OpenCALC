@@ -1,0 +1,139 @@
+
+// Arduino Advanced Mech HyperCalculator Program
+
+
+#include <LiquidCrystal_I2C.h> //Header file for LCD from https://www.arduino.cc/en/Reference/LiquidCrystal
+#include <Keypad.h> //Header file for Keypad from https://github.com/Chris--A/Keypad
+
+const byte ROWS = 5; // Five rows
+const byte COLS = 4; // Four columns
+
+// Define the Keymap
+char keys[ROWS][COLS] = {
+  {'F','C','A','/'},
+  {'7','8','9','*'},
+  {'4','5','6','-'},
+  {'1','2','3','+'},
+  {'0','(',')','='}
+};
+
+byte rowPins[ROWS] = { 7, 8, 9, 10, 11 };// Connect keypad ROW0, ROW1, ROW2, ROW3 and ROW4 to these Arduino pins.
+byte colPins[COLS] = { 2, 3, 4, 5 }; // Connect keypad COL0, COL1, COL2 and COL3 to these Arduino pins.
+
+Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS ); //  Create the Keypad
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+
+char key;
+bool calculate,fin=0;
+int pointer,i,intkey;
+char bafr[255]=" ";
+
+
+void setup() {
+  lcd.init(); //We are using a 16*2 LCD display
+  lcd.backlight(); //Backlight on
+  lcd.setCursor(0,0); //set Column X, Row Y
+  lcd.print("HyperCalc boot..");
+  lcd.setCursor(0,1); //set Column X, Row Y
+  lcd.print("|              |");
+  for(pointer=1;pointer<15;pointer++){  //progress bar
+    lcd.setCursor(pointer,1);
+    lcd.print(char(255)); //print blackbox
+    delay(200);
+  }
+   delay(1000); //Wait for display to show info
+   pointer=15;
+   lcd.clear(); //Then clean it
+   lcd.setCursor(1,15); //set Column X, Row Y 
+   lcd.print(0);
+}
+
+
+void loop() {
+ key = kpd.getKey(); //storing pressed key value in a char
+
+ if (key!=NO_KEY)
+   DetectButtons();
+
+// if (calculate==1)
+//   CalculateResult(bafr[], pointer);   
+}
+
+
+void DetectButtons(){ 
+  intkey = key - '0';
+  switch (intkey) {
+  case 0:
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+  case 7:
+  case 8:
+  case 9:
+  case "(":
+  case ")":
+  case "+":
+  case ".":
+  case "*":
+  case "/":
+    bafr[pointer]=key;
+    pointer++;
+    Rewrite();
+    break;
+    
+  case "=":
+    calculate=1;
+    fin=1;
+    break;
+  case "F":
+    //TODO
+    break;
+  case "A":
+    //TODO
+    break;
+  case "C":
+    if fin==1 {
+      bafr[]=" ";
+      calculate=0;
+      fin=0;
+      i=0
+      pointer=15
+      lcd.clear(); //Clean LCD
+      lcd.setCursor(1,15); //set Column X, Row Y 
+      lcd.print(0);
+      }
+    else {
+      pointer--;
+      bafr[pointer=" "];
+      Rewrite();
+      break;
+    }
+  default:
+    // if nothing else matches, do the default
+    // default is optional
+    break;
+}
+}
+
+void Rewrite(){
+    lcd.setCursor(0,0);
+    lcd.print(bafr[pointer-15]);
+    lcd.print(bafr[pointer-14]);
+    lcd.print(bafr[pointer-13]);
+    lcd.print(bafr[pointer-12]);
+    lcd.print(bafr[pointer-11]);
+    lcd.print(bafr[pointer-10]);
+    lcd.print(bafr[pointer-9]);
+    lcd.print(bafr[pointer-8]);
+    lcd.print(bafr[pointer-7]);
+    lcd.print(bafr[pointer-6]);
+    lcd.print(bafr[pointer-5]);
+    lcd.print(bafr[pointer-4]);
+    lcd.print(bafr[pointer-3]);
+    lcd.print(bafr[pointer-2]);
+    lcd.print(bafr[pointer-1]);
+    lcd.print(bafr[pointer-0]);
+}

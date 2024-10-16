@@ -1,0 +1,29 @@
+DEBUG FUNCTIONS
+
+void oprbafrCheck()
+void numbafrCheck()
+void pointerCheck()
+void numCheck()
+void cycleCheck()
+
+GUI FUNCTIONS
+
+void working(bool worktemp)
+void writeKey(bool DBG)
+void bracketCheck()
+
+PARSING/CLEANING FUNCTIONS
+
+void formCompress()
+void pointerCompress()
+void plusMinus()
+void bracketminus()
+void bracketRemove()
+void NUMcount()
+void printAns()
+
+COMPUTING FUNCTIONS
+
+void computeAns()
+void simpleAdd()
+void simpleMulDiv()
