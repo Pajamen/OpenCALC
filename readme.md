@@ -1,6 +1,8 @@
 # OpenCALC
 Opensource Atmel based "Science-Fiction" calculator. 
 
+![alt text](https://github.com/Pajamen/OpenCALC/blob/testing/foto_beta.jpg?raw=true)
+
 Sorry for my english, it's not my native language and it's rather rusty.
 
 My first "bigger" project with Atmel/Arduino system.
