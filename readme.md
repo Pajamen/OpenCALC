@@ -27,16 +27,18 @@ How does (or should) it work:
 - Heart of project are two arrays
  - OPRBAFR - here are saved operators, brackers etc. Numbers are saved as char "N" and empty slots are "X"
  - NUMBAFR - under same index as number "N" in OPRBAFR is saved numerical value.
-- example:
+- Example:
 
-OPRBAFR:    N+N-(N*(-N))
-NUMBAFR:    203004000500
-EQUATION:   2+3-(4*(-5))
+- OPRBAFR:    N+N-(N*(-N))
+- NUMBAFR:    203004000500
+- EQUATION:   2+3-(4*(-5))
 
 - Program automatically rejects input that will cause syntax error (multiple numbers or operators next to each other etc.)
--When "=" is pressed and equation should be solvable (no unclosed brackets, equation doesn't end with operator and so on), program starts rigorous "computing cycle" with solving and cleaning functions until one number is left as "ANS".
+- When "=" is pressed and equation should be solvable (no unclosed brackets, equation doesn't end with operator and so on), program starts rigorous "computing cycle" with solving and cleaning functions until one number is left as "ANS".
 
 DEBUG systems:
-- CYCLECHECK - shows how many cycles did it take to compute equation. If >99, system automatically fails to slowmo computing for bugfixing purposes.
+- CYCLECHECK - shows how many cycles did it take to compute equation. If >"MAXOP", system automatically fails to slowmo computing for bugfixing purposes. In this mode every operation triggers 1s pause and name of passed operation is written to the bottom row.
 - OPRBAFRCHECK - show raw OPRBAFR in top row
-- NUMBAFRCHECK - show raw NUMBAFR
+- NUMBAFRCHECK - show raw NUMBAFR in bottom row
+- NUMCHECK - show value of current "NUM"
+- POINTERCHECK - show deepness of current pointer (debug memory access violation)
