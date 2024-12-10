@@ -40,30 +40,31 @@ void simpleAdd() {  // Adds NUMs in reverse order
   formCompress();
 }
 
-void simpleMulDiv() {  // TODO Multiplies NUMs in reverse order
-  for (cyclepointer = pointer; cyclepointer > 1; cyclepointer--) {
-    if ((oprbafr[cyclepointer] == 'N') and (oprbafr[cyclepointer - 2] == 'N') and ((oprbafr[cyclepointer - 1] == '/') or (oprbafr[cyclepointer - 1] == '*'))) {
-      if (oprbafr[cyclepointer - 1] == '*') {
-        numbafr[cyclepointer - 2] = numbafr[cyclepointer - 2] * numbafr[cyclepointer];
+void simpleMulDiv() {  
+  for (cyclepointer = 1; cyclepointer <= pointer; cyclepointer++) {
+    if ((oprbafr[cyclepointer] == 'N') and (oprbafr[cyclepointer + 2] == 'N') and ((oprbafr[cyclepointer + 1] == '/') or (oprbafr[cyclepointer +1] == '*'))) {
+      if (oprbafr[cyclepointer + 1] == '*') {
+        numbafr[cyclepointer + 2] = numbafr[cyclepointer + 2] * numbafr[cyclepointer];
         numbafr[cyclepointer] = 0;
         oprbafr[cyclepointer] = 'X';
-        oprbafr[cyclepointer - 1] = 'X';
+        oprbafr[cyclepointer + 1] = 'X';
         if (cyclecheck == 1) {
           lcd.setCursor(5, 1);
           lcd.print("MulDiv*");
           cycleCheck();
         }
-      } else if (oprbafr[cyclepointer - 1] == '/') {
-        numbafr[cyclepointer - 2] = numbafr[cyclepointer - 2] / numbafr[cyclepointer];
+      } else if (oprbafr[cyclepointer + 1] == '/') {
+        numbafr[cyclepointer + 2] = numbafr[cyclepointer] / numbafr[cyclepointer + 2];
         numbafr[cyclepointer] = 0;
         oprbafr[cyclepointer] = 'X';
-        oprbafr[cyclepointer - 1] = 'X';
+        oprbafr[cyclepointer + 1] = 'X';
         if (cyclecheck == 1) {
           lcd.setCursor(5, 1);
           lcd.print("MulDiv/");
           cycleCheck();
         }
       }
+      break; // End simpleMulDiv() function prematuraly anc continue with ComputeAns() cycle
     }
   }
   formCompress();
